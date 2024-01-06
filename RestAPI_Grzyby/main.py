@@ -4,17 +4,34 @@
 # uvicorn main:app --reload - uruchomienie serwera
 # http://127.0.0.1:8000/docs - dokumentacja usługi REST API
 
-# version 0.1 - Initial version - Phantom REST API
+# version 0.2 - Added ML classification model with sklearn and mushroom dataset
 
 from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
+from sklearn import tree
+import pandas as pd
 
-#predict
-prediction = "to be added later"
+# import danych do budowy modelu
+dataset = pd.read_csv('Data//GRZYBY_dataset.csv')
+#print(dataset.head())
 
-#probabilities
-probs = 0.01
+# Budowa modelu
+model = tree.DecisionTreeClassifier()
+#print(dataset.size)
+# Trenowanie modelu
+y = dataset['rodzaj']
+x = dataset.iloc[:,1:23]
+
+y_conv = pd.get_dummies(dataset['rodzaj'])
+x_conv = pd.get_dummies(dataset.iloc[:,1:23])
+#print(pd.get_dummies(dataset.iloc[0:1,1:23]))
+model.fit(x_conv, y)
+#print(model.score(x, y))
+
+#print(model.predict(pd.get_dummies(dataset.iloc[0:1,1:23])))
+
+# Rest API
 
 app = FastAPI()
 
@@ -50,4 +67,22 @@ class Mushroom(BaseModel):
 
 @app.post("/grzyby/klasyfikuj/")
 async def classify_mushroom(mushroom: Mushroom):
+    # Klasyfikacja przypadku
+
+    #requestjson = mushroom.text
+    #requestdf = pd.get_dummies(dataset.iloc[0:1,1:23])
+
+    #requestdf = pd.DataFrame.from_dict(requestjson, orient='index')
+
+    x_pred = dataset.iloc[-5:-4, 1:23]  # tymczasowy wybór ostatniej obserwacji ze zbioru treningowego
+    #Transformacja przypadku testowego
+    x_pred_all = pd.concat([x, x_pred], ignore_index=True, sort=False) # połaczenie obserwacji testowej ze zbiorem treningowym
+    x_pred_conv = pd.get_dummies(x_pred_all) # przekształcenie zmiennych kategorycznych
+
+    prediction = model.predict(x_pred_conv.tail(1))[0]  # predykcja kategorii obserwacji testowej (jadalny / trujący)
+    if (prediction == 'jadalny'):
+         probs = model.predict_proba(x_pred_conv.tail(1))[0, 0] # prawdopodobieństwo przynależności do klasy jadalny
+    else:
+        probs = model.predict_proba(x_pred_conv.tail(1))[0, 1]
+
     return Response(rodzaj=prediction, prawdopodobienstwo=probs)
