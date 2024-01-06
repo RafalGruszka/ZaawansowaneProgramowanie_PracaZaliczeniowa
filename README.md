@@ -1,4 +1,5 @@
-Projekt zaliczeniowy wykonany w ramach zajęć z przedmiotu Zaawansowane programowanie na kierunku Informatyka - II stopnia, ns. sem.1 
+Projekt zaliczeniowy wykonany w ramach zajęć z przedmiotu Zaawansowane programowanie na kierunku Informatyka - II stopnia, ns. sem.1.
+
 Autorzy projektu: Rafał Gruszka, Dawid Furs
 Projekt składa się z następujących elementów:
   1. Usługa RestAPI stworzona w języku Python (pakiety: FastAPI, sklearn). Usługa wykonuje klasyfikację grzybów na podstawie podanych cech, wykorzystując model machine learning drzew decyzyjnych (decision tree).
