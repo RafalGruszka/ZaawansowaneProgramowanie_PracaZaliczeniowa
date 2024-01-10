@@ -86,10 +86,3 @@ async def classify_mushroom(mushroom: Mushroom):
         probs = model.predict_proba(x_pred_conv.tail(1))[0, 1]
 
     return Response(rodzaj=prediction, prawdopodobienstwo=probs)
-
-
-# chwilowo do cwiczenia
-# TODO do usuniecia
-@app.get('/')
-def hello():
-    return "Hello from FastAPI"
