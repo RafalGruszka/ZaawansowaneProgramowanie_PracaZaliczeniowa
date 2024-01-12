@@ -33,5 +33,6 @@ Projekt składa się z części serwerowej, tj. usługi RestAPI i klienta komuni
       W celu korzystania z aplikacji webowej należy zainstalować node.js w wersji 20.11.0 LTS lub nowszej.
       Następnie z terminala środowiska IDE wykonać polecenie:
             npm install
+            npm install react-router-dom
             npm start
       Jeśli stona webowa nie zostanie automatycznie włączona, należy udać się pod adres http://localhost:3000
