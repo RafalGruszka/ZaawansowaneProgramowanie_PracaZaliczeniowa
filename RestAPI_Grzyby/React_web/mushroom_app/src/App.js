@@ -1,38 +1,45 @@
-import React, {useState, useEffect} from "react"
-import api from "./api"
+import React, { useState, useEffect } from "react";
+//import { useNavigate } from "react-router-dom";
+import api from "./api";
 
 const App = () => {
   const [formData, setFormData] = useState({
-        ksztalt_kapelusza: '',
-        powierzchnia_kapelusza: '',
-        kolor_kapelusza: '',
-        zasinienia: '',
-        zapach: '',
-        sposob_przyrastania_blaszek: '',
-        odstep_miedzy_blaszkami: '',
-        rozmiar_blaszek: '',
-        kolor_blaszek: '',
-        ksztalt_trzonu: '',
-        korzen_trzonu: '',
-        powierzchnia_trzonu_nad_pierscieniem: '',
-        powierzchnia_lodygi_ponizej_pierscienia: '',
-        kolor_trzonu_nad_pierscieniem: '',
-        kolor_trzonu_pod_pierscieniem: '',
-        rodzaj_oslony: '',
-        kolor_oslony: '',
-        liczba_pierscieni: '',
-        rodzaj_pierscienia: '',
-        kolor_wysypu_zarodnikow: '',
-        populacja: '',
-        srodowisko: ''
-    });
+    ksztalt_kapelusza: "",
+    powierzchnia_kapelusza: "",
+    kolor_kapelusza: "",
+    zasinienia: "",
+    zapach: "",
+    sposob_przyrastania_blaszek: "",
+    odstep_miedzy_blaszkami: "",
+    rozmiar_blaszek: "",
+    kolor_blaszek: "",
+    ksztalt_trzonu: "",
+    korzen_trzonu: "",
+    powierzchnia_trzonu_nad_pierscieniem: "",
+    powierzchnia_lodygi_ponizej_pierscienia: "",
+    kolor_trzonu_nad_pierscieniem: "",
+    kolor_trzonu_pod_pierscieniem: "",
+    rodzaj_oslony: "",
+    kolor_oslony: "",
+    liczba_pierscieni: "",
+    rodzaj_pierscienia: "",
+    kolor_wysypu_zarodnikow: "",
+    populacja: "",
+    srodowisko: "",
+  });
+
+//  const navigate = useNavigate();
+//  const [postResponse, setPostResponse] = useState(null);
+
+  const [dropdownOptions, setDropdownOptions] = useState({});
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:8000/get-data");
         const data = await response.json();
-        setFormData(data);
+        setDropdownOptions(data);
       } catch (error) {
         console.error("Błąd pobierania danych:", error);
       }
@@ -40,6 +47,11 @@ const App = () => {
 
     fetchData();
   }, []);
+
+
+//  const handleBackClick = () => {
+//    navigate(-1);
+//  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -55,41 +67,13 @@ const App = () => {
     try {
       const response = await api.post("/grzyby/klasyfikuj/", formData);
       // Handle the response from the server (show result to the user)
+      setResponse(response.data);
       console.log(response.data);
     } catch (error) {
       // Handle errors (show an error message to the user)
       console.error("Error submitting form:", error.message);
     }
-
-    // Clear the form after submission
-    setFormData({
-        ...formData,
-        ksztalt_kapelusza: formData.ksztalt_kapelusza,
-        powierzchnia_kapelusza: "",
-        kolor_kapelusza: '',
-        zasinienia: '',
-        zapach: '',
-        sposob_przyrastania_blaszek: '',
-        odstep_miedzy_blaszkami: '',
-        rozmiar_blaszek: '',
-        kolor_blaszek: '',
-        ksztalt_trzonu: '',
-        korzen_trzonu: '',
-        powierzchnia_trzonu_nad_pierscieniem: '',
-        powierzchnia_lodygi_ponizej_pierscienia: '',
-        kolor_trzonu_nad_pierscieniem: '',
-        kolor_trzonu_pod_pierscieniem: '',
-        rodzaj_oslony: '',
-        kolor_oslony: '',
-        liczba_pierscieni: '',
-        rodzaj_pierscienia: '',
-        kolor_wysypu_zarodnikow: '',
-        populacja: '',
-        srodowisko: ''
-    });
   };
-
-
 
   return (
     <div>
@@ -112,18 +96,11 @@ const App = () => {
                 onChange={handleInputChange}
               >
                 <option value="">Wybierz...</option>
-                {Array.isArray(value)
-                  ? value.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))
-                  : (
-                      <option key={value} value={value}>
-                        {value}
-                      </option>
-                  )
-                }
+                {dropdownOptions[key]?.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
               </select>
             </div>
           ))}
@@ -131,6 +108,11 @@ const App = () => {
             Submit
           </button>
         </form>
+            {response && (
+              <div>
+                <p>{response.rodzaj} z prawdopodobieństwem {response.prawdopodobienstwo}</p>
+              </div>
+            )}
       </div>
     </div>
   );
