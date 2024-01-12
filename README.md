@@ -9,7 +9,7 @@ Projekt składa się z części serwerowej, tj. usługi RestAPI i klienta komuni
       Do wytrenowania modelu został wykorzystany zbiór danych "mushrooms.csv" (przetłumaczony na język polski). 
         
         Wywołanie usługi: 
-        Wywołanie usługi polega na przekazaniu chech badanego grzyba.
+        Wywołanie usługi polega na przekazaniu cech badanego grzyba.
         # POST request: http://127.0.0.1:8000/grzyby/klasyfikuj/ (request body w formacie JSON - format przykładowego body dostepny w katalogu /RestAPI_Grzyby/Data/example_request.json)    
         
         Odpowiedź:
@@ -30,8 +30,8 @@ Projekt składa się z części serwerowej, tj. usługi RestAPI i klienta komuni
 ##############################  Klient - Apllikacja webowa React #########################################
       Klient usługi Rest jako aplikacja webowa zbudowana z wykorzytaniem biblioteki React. 
       Aplikacja webowa pozwala na wprowadzenie cech badanego grzyba wysyłając żądanie klasyfikacji POST (request body body w formacie JSON). 
-      Opis - do be added
-
-      # Opis uruchomienia #
-  
-      to be added...
+      W celu korzystania z aplikacji webowej należy zainstalować node.js w wersji 20.11.0 LTS lub nowszej.
+      Następnie z terminala środowiska IDE wykonać polecenie:
+            npm install
+            npm start
+      Jeśli stona webowa nie zostanie automatycznie włączona, należy udać się pod adres http://localhost:3000
