@@ -8,9 +8,12 @@
 
 from typing import Union
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sklearn import tree
 import pandas as pd
+
 
 # import danych do budowy modelu
 dataset = pd.read_csv('Data//GRZYBY_dataset.csv')
@@ -34,6 +37,18 @@ model.fit(x_conv, y)
 # Rest API
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
 
 
 class Response(BaseModel):
@@ -86,3 +101,18 @@ async def classify_mushroom(mushroom: Mushroom):
         probs = model.predict_proba(x_pred_conv.tail(1))[0, 1]
 
     return Response(rodzaj=prediction, prawdopodobienstwo=probs)
+
+
+@app.get("/get-data")
+async def get_data():
+    data = {}
+
+    for column in dataset.columns:
+        unique_values = dataset[column].unique().tolist()
+        data[column] = unique_values
+
+    if data:
+        first_key = list(data.keys())[0]
+        data.pop(first_key)
+
+    return JSONResponse(content=data)
