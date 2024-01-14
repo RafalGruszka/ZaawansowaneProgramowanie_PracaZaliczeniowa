@@ -5,15 +5,20 @@
 # http://127.0.0.1:8000/docs - dokumentacja usługi REST API
 
 # version 0.2 - Added ML classification model with sklearn and mushroom dataset
+# version 0.3 - Added CORS middleware to allow requests from localhost:3000
+# version 0.4 - Added get-data endpoint to get all possible values for each column
+# version 0.5 - Switched example classification data with data included in request body
+# version 0.6 - Added get-explanation endpoint to get decision tree explanation as png file
 
 from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sklearn import tree
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 # import danych do budowy modelu
 dataset = pd.read_csv('Data//GRZYBY_dataset.csv')
@@ -22,6 +27,7 @@ dataset = pd.read_csv('Data//GRZYBY_dataset.csv')
 # Budowa modelu
 model = tree.DecisionTreeClassifier()
 #print(dataset.size)
+
 # Trenowanie modelu
 y = dataset['rodzaj']
 x = dataset.iloc[:,1:23]
@@ -82,25 +88,38 @@ class Mushroom(BaseModel):
 
 @app.post("/grzyby/klasyfikuj/")
 async def classify_mushroom(mushroom: Mushroom):
+
+    # Pobranie danych z request json
+    mushroomToClassify = [Mushroom(**mushroom.model_dump())]
+    mushroomToClassify = pd.DataFrame([mod.model_dump() for mod in mushroomToClassify])
+    dfmushroomToClassify = pd.DataFrame(mushroomToClassify)
     # Klasyfikacja przypadku
 
-    #requestjson = mushroom.text
-    #requestdf = pd.get_dummies(dataset.iloc[0:1,1:23])
+    #x_pred = dataset.iloc[-5:-4, 1:23]  # tymczasowy wybór ostatniej obserwacji ze zbioru treningowego
+    x_pred = pd.DataFrame(dfmushroomToClassify)
 
-    #requestdf = pd.DataFrame.from_dict(requestjson, orient='index')
-
-    x_pred = dataset.iloc[-5:-4, 1:23]  # tymczasowy wybór ostatniej obserwacji ze zbioru treningowego
     #Transformacja przypadku testowego
     x_pred_all = pd.concat([x, x_pred], ignore_index=True, sort=False) # połaczenie obserwacji testowej ze zbiorem treningowym
     x_pred_conv = pd.get_dummies(x_pred_all) # przekształcenie zmiennych kategorycznych
 
     prediction = model.predict(x_pred_conv.tail(1))[0]  # predykcja kategorii obserwacji testowej (jadalny / trujący)
+
     if (prediction == 'jadalny'):
          probs = model.predict_proba(x_pred_conv.tail(1))[0, 0] # prawdopodobieństwo przynależności do klasy jadalny
     else:
         probs = model.predict_proba(x_pred_conv.tail(1))[0, 1]
 
     return Response(rodzaj=prediction, prawdopodobienstwo=probs)
+
+@app.get("/get-explanation")
+
+async def get_explanation():
+    #plt.figure()
+    tree.plot_tree(model, filled=True, feature_names=x_conv.columns, class_names=y_conv.columns, fontsize=4)
+    plt.savefig('Data//tree_explanation.png', format='png', bbox_inches="tight")
+
+    return FileResponse("Data//tree_explanation.png")
+
 
 
 @app.get("/get-data")
