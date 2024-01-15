@@ -5,11 +5,11 @@
 ### Autorzy projektu 
 Rafał Gruszka, Dawid Furs
 ### Opis projektu
-Projekt składa się z części serwerowej, tj. usług RestAPI wykonanej w jezyku Python oraz klienta komunikującego się z usługą (aplikacja webowa React). Aplikacja po stronie serwera bazuje na modelu ML drzew decyzyjnych służacym do klasyfikacji grzybów (jadalny / trujący) na podstawie podanych cech.Aplikacja po stronie klienta obejmuje graficzny (webowy) intefejs użytkownika pozwalając na wybór cech badanego grzyba oraz prezentuje wynik klasyfikacji.
+Projekt składa się z części serwerowej, tj. usług RestAPI wykonanej w jezyku Python oraz klienta komunikującego się z usługą (aplikacja webowa React).
 
 #### Serwer - usługa w standardzie REST (RestAPI)
+Aplikacja bazuje na modelu machine learning drzew decyzyjnych służacym do klasyfikacji grzybów (jadalny / trujący). Klasyfikacja odbywa się na podstawie analizy podanych cech. Do wytrenowania modelu wykorzystany został zbiór danych **mushrooms.csv** (przetłumaczony na język polski). <br>
 Użyte pakiety: FastAPI, sklearn, uvicorn, pandas. <br>
-Do wytrenowania modelu został wykorzystany zbiór danych **mushrooms.csv** (przetłumaczony na język polski). 
         
 Dostępne endpointy:
 * http://127.0.0.1:8000/grzyby/klasyfikuj/ (POST request, request body w formacie JSON - format przykładowego body dostepny w katalogu /RestAPI_Grzyby/Data/example_request.json). Jako odpowiedź zwracana jest informacja o tym, czy grzyb jest jadalny, czy trujący wraz z pradopodobieństwem poprawności wykonanej klasyfikaji w przedziale od 0 do 1. <br>
@@ -32,7 +32,12 @@ pip install "uvicorn[standard]" (instalacja serwera)
 uvicorn main:app --reload (uruchomienie serwera)
 ```
 Dokumentacja usługi REST w formacie Swagger dostępna pod adresem: http://127.0.0.1:8000/docs
+
+
 #### Klient - Apllikacja webowa React 
+Aplikacja po stronie klienta obejmuje graficzny (webowy) intefejs użytkownika pozwalając na wybór cech badanego grzyba oraz prezentuje wynik klasyfikacji.
+
+##### Opis uruchomienia
 W celu korzystania z aplikacji webowej należy zainstalować node.js w wersji 20.11.0 LTS lub nowszej.
 Następnie z terminala środowiska IDE wykonać polecenie:
 ```
