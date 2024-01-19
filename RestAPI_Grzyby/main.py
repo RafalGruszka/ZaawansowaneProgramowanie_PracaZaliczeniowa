@@ -9,6 +9,8 @@
 # version 0.4 - Added get-data endpoint to get all possible values for each column
 # version 0.5 - Switched example classification data with data included in request body
 # version 0.6 - Added get-explanation endpoint to get decision tree explanation as png file
+# version 0.7 - Added tree explanation to website, and navabr to navigate on site
+# version 0.8 - Fixed labels, and make response with pictures
 
 from typing import Union
 from fastapi import FastAPI
@@ -121,7 +123,17 @@ async def get_explanation():
     return FileResponse("Data//tree_explanation.png")
 
 
+@app.get("/get/image/poisonous")
+async def get_image():
+    image = "Data//poisonous.png"
 
+    return FileResponse(image)
+
+@app.get("/get/image/edible")
+async def get_image():
+    image = "Data//edible.png"
+
+    return FileResponse(image)
 @app.get("/get-data")
 async def get_data():
     data = {}
