@@ -11,6 +11,8 @@
 # version 0.6 - Added get-explanation endpoint to get decision tree explanation as png file
 # version 0.7 - Added tree explanation to website, and navabr to navigate on site
 # version 0.8 - Fixed labels, and make response with pictures
+# version 0.9 - Added more pictures to website
+# version 1.0 - Rescaled tree picture and changed fontsize to fit on website
 
 from typing import Union
 from fastapi import FastAPI
@@ -116,9 +118,9 @@ async def classify_mushroom(mushroom: Mushroom):
 @app.get("/get-explanation")
 
 async def get_explanation():
-    #plt.figure()
-    tree.plot_tree(model, filled=True, feature_names=x_conv.columns, class_names=y_conv.columns, fontsize=4)
-    plt.savefig('Data//tree_explanation.png', format='png', bbox_inches="tight")
+
+    tree.plot_tree(model, filled=True, feature_names=x_conv.columns, class_names=y_conv.columns, fontsize=3)
+    plt.savefig('Data//tree_explanation.png', format='png', dpi=200, bbox_inches='tight', pad_inches=1.3)
 
     return FileResponse("Data//tree_explanation.png")
 
