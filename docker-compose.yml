@@ -1,0 +1,22 @@
+version: "3.12"
+services:
+  react-app:
+    container_name: React_web
+    build:
+      context: ./React_web/mushroom_app
+      dockerfile: Dockerfile-react
+    image: my-react-container
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./React_web/mushroom_app:/usr/src/app"
+      - "/usr/src/app/node_modules/"
+  fastapi:
+    container_name: RestAPI_Grzyby
+    build:
+      context: ./RestAPI_Grzyby
+      dockerfile: Dockerfile-fastapi
+    command: sh -c "uvicorn main:app --reload --port=8000 --host=0.0.0.0"
+    ports:
+      - "8000:8000"
